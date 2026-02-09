@@ -3,6 +3,7 @@
     "STRON_URL": "http://www.server-newr.stronpower.com",
     "TAMPER_URL": "http://www.server-newv.stronpower.com",
     "BEEMS_URL": "https://apisms.beem.africa",
-    "LOCAL_URL3": "http://102.64.66.122:2004"
+    "SERVER_URL1": "http://102.64.66.122:2004",
+    "LOCAL_URL3": "http://127.0.0.1:2004"
 }
 
