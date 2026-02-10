@@ -1,0 +1,11 @@
+services:
+  wptmeterapi-tamper:
+    build:
+      context: .
+    image: wptmeterapi_tamper_new:latest
+    environment:
+      NODE_ENV: production
+      PORT: 2010
+    ports:
+      - "127.0.0.1:2010:2010"
+    restart: unless-stopped
