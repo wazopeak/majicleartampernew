@@ -1,20 +1,29 @@
-FROM node:20-alpine AS base
+FROM node:18-alpine AS builder
 
-# Install OS packages required to build native dependencies such as bcrypt.
-RUN apk add --no-cache python3 make g++
+WORKDIR /app
 
-WORKDIR /usr/src/app
-
-# Install dependencies separately to leverage Docker layer caching.
+# install dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev
+# Alpine needs build tools for some native modules. Install them before npm install.
+ENV PYTHON=/usr/bin/python3
+ENV npm_config_python=/usr/bin/python3
+RUN apk add --no-cache python3 make g++ libc6-compat git \
+ && npm install --legacy-peer-deps --prefer-offline --no-audit --loglevel verbose
 
-# Copy application code.
+# copy sources and build
 COPY . .
+RUN npm run build
 
-ENV NODE_ENV=production \
-    PORT=2010
+FROM node:18-alpine AS runner
+WORKDIR /app
 
-EXPOSE 2010
+# lightweight static server
+RUN npm install -g serve@14.1.2 --silent
 
-CMD ["node", "index.js"]
+# copy build output
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 5173
+
+# serve listens on 0.0.0.0 inside container; host binding is controlled by docker-compose
+CMD ["serve", "-s", "dist", "-l", "5173"]

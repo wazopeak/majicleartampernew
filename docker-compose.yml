@@ -1,11 +1,14 @@
+version: "3.8"
+
 services:
-  wptmeterapi-tamper:
-    build:
-      context: .
-    image: wptmeterapi_tamper_new:latest
-    environment:
-      NODE_ENV: production
-      PORT: 2010
-    ports:
-      - "127.0.0.1:2010:2010"
+  web:
+    build: .
+    image: majicleartamper-web-new:latest
     restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    ports:
+      # bind the host side to 127.0.0.1 so the service is only accessible locally
+      - "127.0.0.1:5173:5173"
+    # optional: limit resources (example)
+    deploy: {}
